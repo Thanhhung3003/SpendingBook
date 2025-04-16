@@ -14,6 +14,7 @@ import com.example.appmoney.ui.common.helper.TimeFormat
 import com.example.appmoney.ui.common.helper.TimeHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
 import com.example.appmoney.ui.main.feature.input.viewPagger.InputViewpagerAdapter
+import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -28,6 +29,8 @@ class InputFragment : Fragment() {
     private var calendar = Calendar.getInstance()
 
     private lateinit var viewModel : InputViewModel
+    private lateinit var sharedViewModel: ScreenHomeViewModel
+    private lateinit var adapter: InputViewpagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +44,7 @@ class InputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[InputViewModel::class.java]
+        sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
 
         setupViewPager()
         setupObserver()
@@ -49,27 +53,41 @@ class InputFragment : Fragment() {
         binding.btnSave.setOnClickListener {
             addDateTrans()
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        sharedViewModel.getExpenditureCat {
+            showApiResultToast(false, it)
+        }
+        sharedViewModel.getIncomeCat {
+            showApiResultToast(false, it)
+        }
     }
 
     private fun addDateTrans() {
-        val sDate = binding.tvDate.text.toString().trim()
-        val sAmount = binding.edtMoney.text.toString().trim().toLong()
-        val sNote = binding.edtNote.text.toString().trim()
-        val typeTrans = if (TabObject.tabPosition == 0) {
-            getString(R.string.cat_expenditure)
-        } else {
-            getString(R.string.cat_income)
+        val currentTab = viewModel.selectedTab.value ?: 0
+        (adapter.map[currentTab] as? CategorySelectable)?.getSelectedCategory()?.let {
+            category ->
+            val sDate = binding.tvDate.text.toString().trim()
+            val sAmount = binding.edtMoney.text.toString().trim().toLong()
+            val sNote = binding.edtNote.text.toString().trim()
+            val typeTrans = if (TabObject.tabPosition == 0) {
+                getString(R.string.cat_expenditure)
+            } else {
+                getString(R.string.cat_income)
+            }
+            viewModel.addTrans(category.idCat, sDate,sAmount,sNote,typeTrans,
+                onSuccess = {
+                    showApiResultToast(true)
+                    binding.edtNote.setText("")
+                    binding.edtMoney.setText("")
+                },
+                onFailure = {err ->
+                    showApiResultToast(false,err)
+                })
         }
-        viewModel.addTrans(sDate,sAmount,sNote,typeTrans,
-            onSuccess = {
-                showApiResultToast(true)
-                binding.edtNote.setText("")
-                binding.edtMoney.setText("")
-            },
-            onFailure = {err ->
-                showApiResultToast(false,err)
-            })
+
     }
 
     private fun setupObserver() {
@@ -139,7 +157,7 @@ class InputFragment : Fragment() {
     }
 
     private fun setupViewPager() {
-        val adapter = InputViewpagerAdapter(childFragmentManager, lifecycle)
+        adapter = InputViewpagerAdapter(childFragmentManager, lifecycle)
         binding.Vp.adapter = adapter
 
         TabLayoutMediator(binding.tabMoney, binding.Vp) { tab, position ->

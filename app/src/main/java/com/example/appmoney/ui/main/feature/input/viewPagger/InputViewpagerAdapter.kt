@@ -8,12 +8,15 @@ import com.example.appmoney.ui.main.feature.input.expenditure.ExpenditureFragmen
 import com.example.appmoney.ui.main.feature.input.income.IncomeFragment
 
 class InputViewpagerAdapter(fragmentManager:FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager,lifecycle) {
+
+    val map = mutableMapOf<Int,Fragment>()
+
     override fun getItemCount(): Int {
         return 2
     }
 
     override fun createFragment(position: Int): Fragment {
-        return when( position){
+        val fragment = when( position){
             0 ->{
                 ExpenditureFragment()
             }
@@ -21,5 +24,7 @@ class InputViewpagerAdapter(fragmentManager:FragmentManager, lifecycle: Lifecycl
                 IncomeFragment()
             }
         }
+        map[position] = fragment
+        return fragment
     }
 }

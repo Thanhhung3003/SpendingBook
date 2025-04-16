@@ -14,6 +14,7 @@ import com.example.appmoney.data.model.Transaction
 import com.example.appmoney.data.model.TransAndCat
 import com.example.appmoney.databinding.FragmentHistoryTransBinding
 import com.example.appmoney.ui.common.helper.showApiResultToast
+import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 
 
 class HistoryTransFragment : Fragment() {
@@ -21,6 +22,7 @@ class HistoryTransFragment : Fragment() {
     private val binding get() = _binding!!
     private val adapter = HistoryTransAdapter()
     private lateinit var viewModel: HistoryTransViewModel
+    private lateinit var sharedViewModel: ScreenHomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,122 +40,22 @@ class HistoryTransFragment : Fragment() {
 
         }
         viewModel = ViewModelProvider(this)[HistoryTransViewModel::class.java]
-        viewModel.listTransAndCat.observe(viewLifecycleOwner){ list ->
+        sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
+        viewModel.transactionsDetail.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
         }
-
-        /*val list = mutableListOf(
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BOOK,
-                    color = CategoryColor.BLUE,
-                    desCat = "Giáo dục"
-                ), Transaction(amount = 100000, note = "Mua sách")
-            ),
-            TransAndCat(
-                Category(image = CategoryImage.BUS, color = CategoryColor.RED, desCat = "Đi lại"),
-                Transaction(amount = 300000, note = "Đi học")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.GAME,
-                    color = CategoryColor.GREEN,
-                    desCat = "Giải trí"
-                ),
-                Transaction(amount = 50000, note = "Nạp thẻ game")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BASKET,
-                    color = CategoryColor.YELLOW,
-                    desCat = "Mua sắm"
-                ),
-                Transaction(amount = 1000000, note = "Mua đồ ăn, đồ uống")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BALL,
-                    color = CategoryColor.PINK,
-                    desCat = "Thể thao"
-                ),
-                Transaction(amount = 150000, note = "Thuê sân")
-            ),TransAndCat(
-                Category(
-                    image = CategoryImage.BOOK,
-                    color = CategoryColor.BLUE,
-                    desCat = "Giáo dục"
-                ), Transaction(amount = 100000, note = "Mua sách")
-            ),
-            TransAndCat(
-                Category(image = CategoryImage.BUS, color = CategoryColor.RED, desCat = "Đi lại"),
-                Transaction(amount = 300000, note = "Đi học")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.GAME,
-                    color = CategoryColor.GREEN,
-                    desCat = "Giải trí"
-                ),
-                Transaction(amount = 50000, note = "Nạp thẻ game")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BASKET,
-                    color = CategoryColor.YELLOW,
-                    desCat = "Mua sắm"
-                ),
-                Transaction(amount = 1000000, note = "Mua đồ ăn, đồ uống")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BALL,
-                    color = CategoryColor.PINK,
-                    desCat = "Thể thao"
-                ),
-                Transaction(amount = 150000, note = "Thuê sân")
-            ),TransAndCat(
-                Category(
-                    image = CategoryImage.BOOK,
-                    color = CategoryColor.BLUE,
-                    desCat = "Giáo dục"
-                ), Transaction(amount = 100000, note = "Mua sách")
-            ),
-            TransAndCat(
-                Category(image = CategoryImage.BUS, color = CategoryColor.RED, desCat = "Đi lại"),
-                Transaction(amount = 300000, note = "Đi học")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.GAME,
-                    color = CategoryColor.GREEN,
-                    desCat = "Giải trí"
-                ),
-                Transaction(amount = 50000, note = "Nạp thẻ game")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BASKET,
-                    color = CategoryColor.YELLOW,
-                    desCat = "Mua sắm"
-                ),
-                Transaction(amount = 1000000, note = "Mua đồ ăn, đồ uống")
-            ),
-            TransAndCat(
-                Category(
-                    image = CategoryImage.BALL,
-                    color = CategoryColor.PINK,
-                    desCat = "Thể thao"
-                ),
-                Transaction(amount = 150000, note = "Thuê sân")
-            )
-        )*/
-
 
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getTrans { err ->
+        val exps = sharedViewModel.expList.value ?: emptyList()
+        val incs = sharedViewModel.incomeList.value ?: emptyList()
+        val categories = mutableListOf<Category>()
+        categories.addAll(exps)
+        categories.addAll(incs)
+
+        viewModel.getTrans(categories) { err ->
             showApiResultToast(false, err)
         }
     }

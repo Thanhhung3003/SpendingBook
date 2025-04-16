@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.appmoney.R
 import com.example.appmoney.databinding.FragmentCategoryTypeBinding
 import com.example.appmoney.ui.common.helper.TabObject
+import com.example.appmoney.ui.common.helper.showApiResultToast
 import com.example.appmoney.ui.main.feature.categorytype.viewPagger.VPCatTypeAdapter
 import com.example.appmoney.ui.main.main_screen.AppScreen
+import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.example.appmoney.ui.main.main_screen.navigateFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -21,6 +23,7 @@ class CatTypeFragment : Fragment() {
     private var _binding: FragmentCategoryTypeBinding? = null
     private val binding get() = _binding!!
     private lateinit var catTypeViewModel: CatTypeViewModel
+    private lateinit var sharedViewModel: ScreenHomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,8 +37,9 @@ class CatTypeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         catTypeViewModel = ViewModelProvider(this)[CatTypeViewModel::class.java]
-//
-//        binding.vpCatType.setCurrentItem(TabObject.tabPosition,true)
+        sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
+
+        binding.vpCatType.setCurrentItem(TabObject.tabPosition,true)
         setupViewPagerTransaction()
         setupTabSelected()
 
@@ -64,7 +68,6 @@ class CatTypeFragment : Fragment() {
     private fun setupViewPagerTransaction() {
         val adapter = VPCatTypeAdapter(childFragmentManager, lifecycle)
         binding.vpCatType.adapter = adapter
-        binding.vpCatType.currentItem = TabObject.tabPosition
         TabLayoutMediator(binding.tabCatType, binding.vpCatType) { tab, position ->
             when (position) {
                 0 -> tab.text = getString(R.string.transaction_expenditure)
@@ -78,8 +81,17 @@ class CatTypeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.vpCatType.currentItem = TabObject.tabPosition
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        binding.vpCatType.currentItem = TabObject.tabPosition
+        sharedViewModel.getIncomeCat { showApiResultToast(false, it) }
+        sharedViewModel.getExpenditureCat { showApiResultToast(false, it) }
+
         if (!hidden) {
             catTypeViewModel.setTabSelected(TabObject.tabPosition)
         }

@@ -45,7 +45,7 @@ class CatExpFragment : Fragment(), CatTypeOnClickListener {
 
         val viewModelOnwer = this.parentFragment ?: requireActivity()
         viewModel = ViewModelProvider(viewModelOnwer)[CatTypeViewModel::class.java]
-        sharedViewModel = ViewModelProvider(viewModelOnwer)[ScreenHomeViewModel::class.java]
+        sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
         adapter.setListener(this)
         bingding.rcCatExp.layoutManager = LinearLayoutManager(requireContext())
         bingding.rcCatExp.adapter = adapter
@@ -96,13 +96,6 @@ class CatExpFragment : Fragment(), CatTypeOnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        sharedViewModel.getExpenditureCat {
-            showApiResultToast(false, it)
-        }
     }
 
     override fun onClick(item: Category) {

@@ -13,5 +13,5 @@ data class Transaction(
 
 data class TransAndCat(
     val category: Category,
-    val trans: Transaction
+    val trans: List<Transaction>
 ): Serializable {}

@@ -14,18 +14,19 @@ import com.example.appmoney.ui.main.feature.categorytype.CatTypeViewModel
 import com.example.appmoney.ui.common.adapter.CategoryAdapter
 import com.example.appmoney.ui.common.adapter.CategoryListener
 import com.example.appmoney.ui.common.helper.showApiResultToast
+import com.example.appmoney.ui.main.feature.input.CategorySelectable
 import com.example.appmoney.ui.main.feature.input.InputViewModel
 import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.example.appmoney.ui.main.main_screen.navigateFragment
 
 
-class IncomeFragment : Fragment(), CategoryListener {
+class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
     private var _binding : FragmentIncomeBinding? = null
     private val binding get() = _binding!!
     private val adapter = CategoryAdapter()
 
-    private lateinit var viewModel: InputViewModel
+    private lateinit var viewModel: IncomeViewModel
     private lateinit var sharedViewModel: ScreenHomeViewModel
 
     override fun onCreateView(
@@ -50,17 +51,17 @@ class IncomeFragment : Fragment(), CategoryListener {
     }
 
     private fun observer() {
-        sharedViewModel.incomeList.observe(viewLifecycleOwner) {
-            viewModel.init(it)
-        }
-
         viewModel.categories.observe(viewLifecycleOwner) { categories ->
             adapter.submitList(categories?.toMutableList())
+        }
+
+        sharedViewModel.incomeList.observe(viewLifecycleOwner) {
+            viewModel.init(it)
         }
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(requireParentFragment())[InputViewModel::class.java]
+        viewModel = ViewModelProvider(requireParentFragment())[IncomeViewModel::class.java]
         sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
     }
 
@@ -83,5 +84,9 @@ class IncomeFragment : Fragment(), CategoryListener {
         else {
             viewModel.onSelectedCategory(category)
         }
+    }
+
+    override fun getSelectedCategory(): Category? {
+        return viewModel.getSelectedCat()
     }
 }

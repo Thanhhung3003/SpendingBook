@@ -15,18 +15,19 @@ import com.example.appmoney.databinding.FragmentExpenditureBinding
 import com.example.appmoney.ui.common.adapter.CategoryAdapter
 import com.example.appmoney.ui.common.adapter.CategoryListener
 import com.example.appmoney.ui.common.helper.showApiResultToast
+import com.example.appmoney.ui.main.feature.input.CategorySelectable
 import com.example.appmoney.ui.main.feature.input.InputViewModel
 import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.example.appmoney.ui.main.main_screen.navigateFragment
 
 
-class ExpenditureFragment : Fragment(),CategoryListener {
+class ExpenditureFragment : Fragment(),CategoryListener, CategorySelectable {
     private var _binding : FragmentExpenditureBinding? = null
     private val binding get() = _binding!!
     private val adapter = CategoryAdapter()
 
-    private lateinit var viewModel: InputViewModel
+    private lateinit var viewModel: ExpenditureViewModel
     private lateinit var sharedViewModel: ScreenHomeViewModel
 
     override fun onCreateView(
@@ -50,25 +51,22 @@ class ExpenditureFragment : Fragment(),CategoryListener {
         observer()
     }
     private fun observer() {
-        sharedViewModel.expList.observe(viewLifecycleOwner) {
-            viewModel.init(it)
-        }
-
         viewModel.categories.observe(viewLifecycleOwner) { categories ->
             adapter.submitList(categories?.toMutableList())
+        }
+
+        sharedViewModel.expList.observe(viewLifecycleOwner) {
+            viewModel.init(it)
         }
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(requireParentFragment())[InputViewModel::class.java]
+        viewModel = ViewModelProvider(requireParentFragment())[ExpenditureViewModel::class.java]
         sharedViewModel = ViewModelProvider(requireActivity())[ScreenHomeViewModel::class.java]
     }
 
     override fun onResume() {
         super.onResume()
-        sharedViewModel.getExpenditureCat {
-            showApiResultToast(false, it)
-        }
     }
 
     override fun onDestroyView() {
@@ -85,5 +83,8 @@ class ExpenditureFragment : Fragment(),CategoryListener {
         }
     }
 
+    override fun getSelectedCategory(): Category? {
+        return viewModel.getSelectedCat()
+    }
 
 }

@@ -99,11 +99,6 @@ class CatInFragment : Fragment(), CatTypeOnClickListener {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        sharedViewModel.getIncomeCat { showApiResultToast(false, it) }
-    }
-
     override fun onClick(item: Category) {
         val bundle = BundleHelper.addParam(BUNDLE_KEY_CATEGORY, item).build()
         requireActivity().navigateFragment(AppScreen.Fix, bundle)

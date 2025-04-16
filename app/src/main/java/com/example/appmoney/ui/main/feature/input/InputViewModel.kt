@@ -12,11 +12,6 @@ import com.example.appmoney.ui.common.helper.TabObject
 
 class InputViewModel : ViewModel() {
     private val repo = Repository()
-    private val _categories = MutableLiveData<List<Category>>(emptyList())
-    val categories: LiveData<List<Category>> = _categories
-
-    private val _selectedTab = MutableLiveData<Int>()
-    val selectedTab: LiveData<Int> = _selectedTab
 
     private val _err = MutableLiveData<String?>()
     val err: LiveData<String?> = _err
@@ -25,35 +20,17 @@ class InputViewModel : ViewModel() {
         _err.value = null
     }
 
+    private val _selectedTab = MutableLiveData<Int>()
+    val selectedTab: LiveData<Int> = _selectedTab
+
     fun setTab(tab: Int) {
         _selectedTab.value = tab
 
         TabObject.changeTab(tab)
     }
 
-    fun onSelectedCategory(category: Category) {
-        _categories.value?.let { currentCategories ->
-            val newList = currentCategories.map { categoryOnList ->
-                if (categoryOnList == category) {
-                    categoryOnList.copy(isSelected = true)
-                } else {
-                    categoryOnList.copy(isSelected = false)
-                }
-            }
-            _categories.value = newList
-        }
-    }
+    fun addTrans (sCategoryId: String, sDate: String,sAmount: Long,sNote: String,typeTrans: String, onSuccess: ()-> Unit, onFailure: (String)->Unit){
 
-        fun getSelectedCat(): Category?{
-            return categories.value?.firstOrNull{it.isSelected}
-        }
-
-    fun init(categories: List<Category>) {
-        _categories.value = categories
-    }
-    fun addTrans (sDate: String,sAmount: Long,sNote: String,typeTrans: String, onSuccess: ()-> Unit, onFailure: (String)->Unit){
-
-        val sCategoryId = getSelectedCat()?.idCat
         if (sAmount.toString().isEmpty()) {
             _err.value = "Bạn chưa nhập số tiền"
             return

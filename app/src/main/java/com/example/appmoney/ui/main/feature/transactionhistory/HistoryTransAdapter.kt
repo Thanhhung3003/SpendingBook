@@ -8,32 +8,31 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoney.R
-import com.example.appmoney.data.model.TransAndCat
 import com.example.appmoney.databinding.ItemHistoryTransBinding
 
 
-class TransandCatDiffCallback : DiffUtil.ItemCallback<TransAndCat>() {
-    override fun areItemsTheSame(oldItem: TransAndCat, newItem: TransAndCat): Boolean {
+class TransandCatDiffCallback : DiffUtil.ItemCallback<TransactionDetail>() {
+    override fun areItemsTheSame(oldItem: TransactionDetail, newItem: TransactionDetail): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: TransAndCat, newItem: TransAndCat): Boolean {
+    override fun areContentsTheSame(oldItem: TransactionDetail, newItem: TransactionDetail): Boolean {
         return oldItem == newItem
     }
 
 }
 
-interface TransandCatListener {
-    fun onItemClick(TransandCat: TransAndCat)
+interface TransDetailListener {
+    fun onItemClick(Trans: TransactionDetail)
 }
 
 class HistoryTransAdapter :
-    ListAdapter<TransAndCat, HistoryTransAdapter.TransandCatViewHolder>(
+    ListAdapter<TransactionDetail, HistoryTransAdapter.TransandCatViewHolder>(
         TransandCatDiffCallback()
     ) {
 
-        private var listener: TransandCatListener? = null
-        fun setListener(listener: TransandCatListener) {
+        private var listener: TransDetailListener? = null
+        fun setListener(listener: TransDetailListener) {
             this.listener = listener
         }
 
@@ -41,15 +40,18 @@ class HistoryTransAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindItem(
-            item: TransAndCat,
-            isSelected: Boolean
+            item: TransactionDetail,
         ) {
             binding.apply {
-                imgHis.setImageResource(item.category.image.resource)
-                imgHis.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(root.context, item.category.color.resource))
-                tvHis.text = item.category.desCat
+                val imgRes = item.image?.resource ?: R.drawable.book
+                imgHis.setImageResource(imgRes)
 
-                val type = item.trans.typeTrans
+                val colorRes = item.color?.resource ?: R.color.black
+                imgHis.imageTintList = ColorStateList
+                    .valueOf(ContextCompat.getColor(root.context, colorRes))
+                tvHis.text = item.desCat ?: "Unknow"
+
+                val type = item.typeTrans
                 val prefix = when(type) {
                     "Expenditure" -> "-"
                     "Income" -> "+"
@@ -60,8 +62,8 @@ class HistoryTransAdapter :
                     "Income" -> ContextCompat.getColor(root.context, R.color.colorGreen)
                     else -> ContextCompat.getColor(root.context, R.color.colorRed)
                 }
-                noteHis.text = "(${item.trans.note})"
-                moneyHis.text = "$prefix${item.trans.amount}đ"
+                noteHis.text = "(${item.note})"
+                moneyHis.text = "$prefix${item.amount}đ"
 
                 moneyHis.setTextColor(color)
 
@@ -84,6 +86,6 @@ class HistoryTransAdapter :
 
     override fun onBindViewHolder(holder: TransandCatViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bindItem(item, item.category.isSelected)
+        holder.bindItem(item)
     }
 }
