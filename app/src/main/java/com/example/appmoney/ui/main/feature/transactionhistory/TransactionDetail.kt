@@ -4,7 +4,7 @@ import com.example.appmoney.data.model.CategoryColor
 import com.example.appmoney.data.model.CategoryImage
 
 data class TransactionDetail(
-    val id :String = "",
+    val idTrans :String = "",
     val amount: Long = 0,
     val date: String = "",
     val note: String = "",

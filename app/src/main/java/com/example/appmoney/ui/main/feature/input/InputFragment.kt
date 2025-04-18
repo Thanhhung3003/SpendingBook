@@ -8,11 +8,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmoney.R
+import com.example.appmoney.data.model.Category
 import com.example.appmoney.databinding.FragmentInputBinding
 import com.example.appmoney.ui.common.helper.TabObject
 import com.example.appmoney.ui.common.helper.TimeFormat
 import com.example.appmoney.ui.common.helper.TimeHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
+import com.example.appmoney.ui.main.feature.input.income.IncomeFragment
 import com.example.appmoney.ui.main.feature.input.viewPagger.InputViewpagerAdapter
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -89,7 +91,7 @@ class InputFragment : Fragment() {
         }
 
     }
-
+// Setup Observer ------------------------
     private fun setupObserver() {
         viewModel.selectedTab.observe(viewLifecycleOwner) { tab ->
             binding.Vp.currentItem = tab
@@ -101,7 +103,7 @@ class InputFragment : Fragment() {
             }
         }
     }
-
+// Setup Date-----------------------------
     private fun setupDatePicker() {
         updateDateText()
         binding.apply {
@@ -127,12 +129,9 @@ class InputFragment : Fragment() {
     }
 
     private fun updateDateText() {
-//        val dateFormat = SimpleDateFormat("EEE, dd/MM/yyyy", Locale.getDefault())
-//        binding.tvDate.text = dateFormat.format(calendar.time)
-
         binding.tvDate.text = TimeHelper.getByFormat(calendar, TimeFormat.Date)
     }
-// setup Tab
+// setup Tab and ViewPager-----------------------------------
     private fun setupTabSelected() {
 
         binding.tabMoney.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -172,7 +171,7 @@ class InputFragment : Fragment() {
             }
         }.attach()
     }
-
+//-----------------------------------
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

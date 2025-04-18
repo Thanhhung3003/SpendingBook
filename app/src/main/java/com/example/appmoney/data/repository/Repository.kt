@@ -6,9 +6,8 @@ import com.example.appmoney.data.model.Transaction
 import com.example.appmoney.ui.common.helper.CategoryMap
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 
@@ -116,7 +115,6 @@ class Repository() {
 
     fun delTrans(
         idTrans: String,
-        trans: Transaction,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
@@ -133,15 +131,13 @@ class Repository() {
         onFailure: (String) -> Unit
     ) {
         val userId = getUserId()
-        val categoryMap = mutableMapOf<String, Category>()
-        val categoryTasks = mutableListOf<Task<QuerySnapshot>>()
         db.collection("User").document(userId)
             .collection("Transaction")
             .get()
             .addOnSuccessListener { result ->
                 val list = mutableListOf<Transaction>()
                 result.forEach { doc ->
-                    list.add(CategoryMap.toStringTrans(doc.data).copy(id = doc.id))
+                    list.add(CategoryMap.toStringTrans(doc.data).copy(idTrans = doc.id))
                 }
                 Log.d("Repository", "Fetched ${list.size} TransAndCat")
                 onSuccess(list)
@@ -149,5 +145,27 @@ class Repository() {
             .addOnFailureListener {
                 onFailure(it.message ?: "Lỗi khi lấy Transaction")
             }
+    }
+    fun getTransByMonth(
+        dateStart: Timestamp,
+        dateEnd: Timestamp,
+        onSuccess: (List<Transaction>) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val userId = getUserId()
+        db.collection("User").document(userId)
+            .collection("Transaction")
+            .whereGreaterThanOrEqualTo("date", dateStart)
+            .whereLessThanOrEqualTo("date", dateEnd)
+            .get()
+            .addOnSuccessListener { result ->
+                val list = result.map { doc ->
+                    val trans = CategoryMap.toStringTrans(doc.data)
+                    trans.copy(idTrans = doc.id)
+                }
+                onSuccess(list)
+            }
+            .addOnFailureListener{onFailure(it.message ?: "Unknown error")}
+
     }
 }

@@ -22,7 +22,7 @@ import com.example.appmoney.ui.main.main_screen.navigateFragment
 
 
 class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
-    private var _binding : FragmentIncomeBinding? = null
+    private var _binding: FragmentIncomeBinding? = null
     private val binding get() = _binding!!
     private val adapter = CategoryAdapter()
 
@@ -33,7 +33,7 @@ class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentIncomeBinding.inflate(inflater,container,false)
+        _binding = FragmentIncomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,7 +43,7 @@ class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
         adapter.setListener(this)
 
         binding.apply {
-            rcIncome.layoutManager = GridLayoutManager(requireContext(),4)
+            rcIncome.layoutManager = GridLayoutManager(requireContext(), 4)
             rcIncome.adapter = adapter
         }
         initViewModel()
@@ -80,8 +80,7 @@ class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
     override fun onItemClick(category: Category) {
         if (category.categoryType == CategoryType.BUTTON) {
             requireActivity().navigateFragment(AppScreen.Category)
-        }
-        else {
+        } else {
             viewModel.onSelectedCategory(category)
         }
     }

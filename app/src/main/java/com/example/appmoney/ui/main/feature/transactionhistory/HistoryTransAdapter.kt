@@ -11,7 +11,7 @@ import com.example.appmoney.R
 import com.example.appmoney.databinding.ItemHistoryTransBinding
 
 
-class TransandCatDiffCallback : DiffUtil.ItemCallback<TransactionDetail>() {
+class TransDetailDiffCallback : DiffUtil.ItemCallback<TransactionDetail>() {
     override fun areItemsTheSame(oldItem: TransactionDetail, newItem: TransactionDetail): Boolean {
         return oldItem == newItem
     }
@@ -27,8 +27,8 @@ interface TransDetailListener {
 }
 
 class HistoryTransAdapter :
-    ListAdapter<TransactionDetail, HistoryTransAdapter.TransandCatViewHolder>(
-        TransandCatDiffCallback()
+    ListAdapter<TransactionDetail, HistoryTransAdapter.TransDetailViewHolder>(
+        TransDetailDiffCallback()
     ) {
 
         private var listener: TransDetailListener? = null
@@ -36,7 +36,7 @@ class HistoryTransAdapter :
             this.listener = listener
         }
 
-    inner class TransandCatViewHolder(val binding: ItemHistoryTransBinding) :
+    inner class TransDetailViewHolder(val binding: ItemHistoryTransBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindItem(
@@ -49,7 +49,7 @@ class HistoryTransAdapter :
                 val colorRes = item.color?.resource ?: R.color.black
                 imgHis.imageTintList = ColorStateList
                     .valueOf(ContextCompat.getColor(root.context, colorRes))
-                tvHis.text = item.desCat ?: "Unknow"
+                tvHis.text = item.desCat ?: "Trống"
 
                 val type = item.typeTrans
                 val prefix = when(type) {
@@ -64,7 +64,7 @@ class HistoryTransAdapter :
                 }
                 noteHis.text = "(${item.note})"
                 moneyHis.text = "$prefix${item.amount}đ"
-
+                tvDate.text = item.date
                 moneyHis.setTextColor(color)
 
                 root.setOnClickListener {
@@ -77,14 +77,14 @@ class HistoryTransAdapter :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TransandCatViewHolder {
+    ): TransDetailViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return TransandCatViewHolder(
+        return TransDetailViewHolder(
             ItemHistoryTransBinding.inflate(inflater, parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: TransandCatViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TransDetailViewHolder, position: Int) {
         val item = getItem(position)
         holder.bindItem(item)
     }

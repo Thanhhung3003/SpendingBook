@@ -12,6 +12,7 @@
     <string name="transaction_expenditure">Khoản chi</string>
     <string name="cat_expenditure">Expenditure</string>
     <string name="cat_income">Income</string>
+    <string name="hint_search">Tìm kiếm giao dịch</string>
 
 
 </resources>

@@ -1,50 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:layout_margin="5dp"
+    android:padding="12dp"
+    android:backgroundTint="#FAF8FC"
+    app:cardCornerRadius="16dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#CCCCCC"
+    app:cardElevation="4dp">
 
-    <ImageView
-        android:id="@+id/imgHis"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        app:srcCompat="@drawable/americanfootball" />
-
-    <TextView
-        android:id="@+id/tvHis"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="80dp"
-        android:paddingVertical="5dp"
-        android:text="Đi lại"
-        android:textSize="18sp"/>
-    <TextView
-        android:id="@+id/noteHis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="80dp"
-        android:paddingVertical="5dp"
-        android:text="(du dịch Huế)"
-        android:textSize="15sp"/>
-    <TextView
-        android:id="@+id/moneyHis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="250dp"
-        android:paddingVertical="10dp"
-        android:layout_gravity="center_vertical"
-        android:text="0đ"
-        android:textStyle="bold"
-        android:textSize="25sp"/>
+        android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T5, 17/04/2025"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:textStyle="italic" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
 
+            <!-- Icon -->
+            <ImageView
+                android:id="@+id/imgHis"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/americanfootball"
+                android:layout_marginEnd="12dp" />
 
+            <!-- Nội dung mô tả -->
+            <LinearLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/tvHis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đi lại"
+                    android:textColor="#222222"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/noteHis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="(du dịch Huế)"
+                    android:textColor="#777777"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Số tiền -->
+            <TextView
+                android:id="@+id/moneyHis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0đ"
+                android:textSize="20sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

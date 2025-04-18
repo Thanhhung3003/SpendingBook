@@ -29,13 +29,21 @@ class InputViewModel : ViewModel() {
         TabObject.changeTab(tab)
     }
 
-    fun addTrans (sCategoryId: String, sDate: String,sAmount: Long,sNote: String,typeTrans: String, onSuccess: ()-> Unit, onFailure: (String)->Unit){
+    fun addTrans(
+        sCategoryId: String,
+        sDate: String,
+        sAmount: Long,
+        sNote: String,
+        typeTrans: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
 
         if (sAmount.toString().isEmpty()) {
             _err.value = "Bạn chưa nhập số tiền"
             return
         }
-        if (sCategoryId == null){
+        if (sCategoryId == null) {
             _err.value = "Bạn chưa chọn danh mục"
             return
         }
@@ -45,9 +53,9 @@ class InputViewModel : ViewModel() {
             note = sNote,
             categoryId = sCategoryId,
             typeTrans = typeTrans,
-            )
+        )
 
-        repo.addTrans(transaction,onSuccess,onFailure)
+        repo.addTrans(transaction, onSuccess, onFailure)
     }
 
 }

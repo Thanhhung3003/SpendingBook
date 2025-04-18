@@ -60,4 +60,5 @@ enum class TimeFormat(val formatString: String) {
     Date("EEE,dd/MM/yyyy"),
     MonthDate("MM/yyyy"),
     DateTime("dd/MM/yyyy hh:mm:ss")
+
 }

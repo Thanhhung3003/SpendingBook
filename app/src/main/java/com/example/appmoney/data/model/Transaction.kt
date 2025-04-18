@@ -3,7 +3,7 @@ package com.example.appmoney.data.model
 import java.io.Serializable
 
 data class Transaction(
-    val id :String = "",
+    val idTrans :String = "",
     val amount: Long = 0,
     val date: String = "",
     val note: String = "",

@@ -48,7 +48,7 @@
                 android:background="@drawable/boder_edt_money"
                 android:gravity="center_horizontal"
                 android:paddingLeft="10dp"
-                android:text="CN, 23/03/2025"
+                android:text="Tháng 03/2025"
                 android:textSize="25dp"
                 android:textStyle="bold" />
 
@@ -74,25 +74,14 @@
             android:orientation="horizontal"
             android:paddingVertical="5dp"
             android:layout_marginTop="5dp">
-
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:layout_marginLeft="5dp"
-                android:layout_gravity="center"
-                android:src="@drawable/search" />
-
-            <EditText
-                android:id="@+id/editTextText2"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:background="@null"
-                android:ems="10"
-                android:hint="Nhập giao dịch cần tìm kiếm"
-                android:inputType="text" />
+                android:layout_height="wrap_content"
+                android:iconifiedByDefault="false"
+                android:queryHint="Tìm kiếm giao dịch"
+                android:background="@drawable/custom_searchview"
+                android:elevation="4dp"/>
         </LinearLayout>
         <View
             android:layout_marginTop="1dp"
@@ -103,7 +92,8 @@
             android:id="@+id/rcHistoryTrans"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:contentDescription="Lich su giao dich"/>
 
     </LinearLayout>
 </FrameLayout>
