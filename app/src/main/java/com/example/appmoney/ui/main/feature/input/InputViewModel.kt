@@ -16,8 +16,15 @@ class InputViewModel : ViewModel() {
     private val _err = MutableLiveData<String?>()
     val err: LiveData<String?> = _err
 
+    private val _state = MutableLiveData(InputState())
+    val state: LiveData<InputState> = _state
+
     fun clearErr() {
         _err.value = null
+    }
+
+    fun updateState(newState: InputState?) {
+        _state.value = newState
     }
 
     private val _selectedTab = MutableLiveData<Int>()

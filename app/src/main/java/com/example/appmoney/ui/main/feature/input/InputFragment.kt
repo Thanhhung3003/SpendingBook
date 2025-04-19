@@ -66,22 +66,6 @@ class InputFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val trans = arguments?.getSerializable(BUNDLE_KEY_TRANSACTION,TransactionDetail::class.java)
-        trans?.let {
-            binding.tvDate.text = it.date
-            binding.edtNote.setText(it.note)
-            binding.edtMoney.setText(it.amount.toString())
-            val tab = if (it.typeTrans == "Expenditure") 0 else 1
-            binding.Vp.setCurrentItem(tab, true)
-            if (it.desCat != null && it.color != null && it.image != null) {
-                val cat = Category(
-                    idCat = it.categoryId,
-                    image = it.image,
-                    color = it.color,
-                    desCat = it.desCat
-                )
-            }
-        }
         sharedViewModel.getExpenditureCat {
             showApiResultToast(false, it)
         }
@@ -125,6 +109,15 @@ class InputFragment : Fragment() {
                 viewModel.clearErr()
             }
         }
+
+    viewModel.state.observe(viewLifecycleOwner) {
+        val dateString = TimeHelper.getByFormat(it.date, TimeFormat.Date)
+        binding.apply {
+            edtMoney.setText(it.amount)
+            edtNote.setText(it.note)
+            tvDate.text = dateString
+        }
+    }
     }
 // Setup Date-----------------------------
     private fun setupDatePicker() {
@@ -200,10 +193,29 @@ class InputFragment : Fragment() {
         _binding = null
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             binding.Vp.setCurrentItem(TabObject.tabPosition, true)
+
+            val trans = arguments?.getSerializable(BUNDLE_KEY_TRANSACTION,TransactionDetail::class.java)
+            trans?.let {
+                binding.tvDate.text = it.date
+                binding.edtNote.setText(it.note)
+                binding.edtMoney.setText(it.amount.toString())
+                val tab = if (it.typeTrans == "Expenditure") 0 else 1
+                binding.Vp.setCurrentItem(tab, true)
+                if (it.desCat != null && it.color != null && it.image != null) {
+                    val cat = Category(
+                        idCat = it.categoryId,
+                        image = it.image,
+                        color = it.color,
+                        desCat = it.desCat
+                    )
+                    viewModel.updateState(viewModel.state.value?.copy())
+                }
+            }
         }
     }
 }
