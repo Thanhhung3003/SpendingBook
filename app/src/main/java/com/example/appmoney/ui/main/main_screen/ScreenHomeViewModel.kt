@@ -12,6 +12,9 @@ import kotlinx.coroutines.launch
 class ScreenHomeViewModel: ViewModel() {
     private val repository = Repository()
 
+    private var _categorySelected = MutableLiveData<Category>()
+    val categorySelected: LiveData<Category> = _categorySelected
+
     private val _incomeList = MutableLiveData<List<Category>>()
     val incomeList: LiveData<List<Category>> = _incomeList
 
@@ -29,5 +32,8 @@ class ScreenHomeViewModel: ViewModel() {
         repository.getCategory("Expenditure", { list ->
             _expList.value = list
         }, onFailure)
+    }
+    fun setCategorySelected(category: Category){
+        _categorySelected.value = category
     }
 }

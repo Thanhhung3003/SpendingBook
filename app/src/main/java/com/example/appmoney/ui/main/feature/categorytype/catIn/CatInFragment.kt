@@ -89,7 +89,6 @@ class CatInFragment : Fragment(), CatTypeOnClickListener {
                 }
             }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView)
-
     }
 
 

@@ -6,7 +6,7 @@ import com.example.appmoney.data.model.CategoryImage
 import com.example.appmoney.data.model.Transaction
 import com.google.firebase.Timestamp
 
-object CategoryMap {
+object ConvertMap {
 
     fun toMap(category: Category):Map<String,Any>{
         return hashMapOf(

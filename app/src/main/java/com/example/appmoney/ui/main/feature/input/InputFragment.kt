@@ -1,21 +1,26 @@
 package com.example.appmoney.ui.main.feature.input
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmoney.R
 import com.example.appmoney.data.model.Category
 import com.example.appmoney.databinding.FragmentInputBinding
+import com.example.appmoney.ui.common.helper.Constant.BUNDLE_KEY_TRANSACTION
 import com.example.appmoney.ui.common.helper.TabObject
 import com.example.appmoney.ui.common.helper.TimeFormat
 import com.example.appmoney.ui.common.helper.TimeHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
 import com.example.appmoney.ui.main.feature.input.income.IncomeFragment
 import com.example.appmoney.ui.main.feature.input.viewPagger.InputViewpagerAdapter
+import com.example.appmoney.ui.main.feature.transactionhistory.TransactionDetail
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
@@ -57,8 +62,26 @@ class InputFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
+
+        val trans = arguments?.getSerializable(BUNDLE_KEY_TRANSACTION,TransactionDetail::class.java)
+        trans?.let {
+            binding.tvDate.text = it.date
+            binding.edtNote.setText(it.note)
+            binding.edtMoney.setText(it.amount.toString())
+            val tab = if (it.typeTrans == "Expenditure") 0 else 1
+            binding.Vp.setCurrentItem(tab, true)
+            if (it.desCat != null && it.color != null && it.image != null) {
+                val cat = Category(
+                    idCat = it.categoryId,
+                    image = it.image,
+                    color = it.color,
+                    desCat = it.desCat
+                )
+            }
+        }
         sharedViewModel.getExpenditureCat {
             showApiResultToast(false, it)
         }
@@ -66,7 +89,7 @@ class InputFragment : Fragment() {
             showApiResultToast(false, it)
         }
     }
-
+// add Transaction----------------
     private fun addDateTrans() {
         val currentTab = viewModel.selectedTab.value ?: 0
         (adapter.map[currentTab] as? CategorySelectable)?.getSelectedCategory()?.let {

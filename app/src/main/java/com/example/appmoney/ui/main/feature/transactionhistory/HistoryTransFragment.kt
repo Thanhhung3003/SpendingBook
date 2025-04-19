@@ -1,6 +1,7 @@
 package com.example.appmoney.ui.main.feature.transactionhistory
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,13 +18,18 @@ import com.example.appmoney.data.model.CategoryImage
 import com.example.appmoney.data.model.Transaction
 import com.example.appmoney.data.model.TransAndCat
 import com.example.appmoney.databinding.FragmentHistoryTransBinding
+import com.example.appmoney.ui.common.helper.BundleHelper
+import com.example.appmoney.ui.common.helper.Constant.BUNDLE_KEY_TRANSACTION
 import com.example.appmoney.ui.common.helper.DialogHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
+import com.example.appmoney.ui.main.feature.input.InputFragment
+import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
+import com.example.appmoney.ui.main.main_screen.navigateFragment
 import java.util.Calendar
 
 
-class HistoryTransFragment : Fragment() {
+class HistoryTransFragment : Fragment(),TransDetailListener {
     private var _binding: FragmentHistoryTransBinding? = null
     private val binding get() = _binding!!
     private val adapter = HistoryTransAdapter()
@@ -46,6 +52,7 @@ class HistoryTransFragment : Fragment() {
         binding.apply {
             rcHistoryTrans.layoutManager = LinearLayoutManager(requireContext())
             rcHistoryTrans.adapter = adapter
+            adapter.setListener(this@HistoryTransFragment)
         }
         setupDeleteTrans(binding.rcHistoryTrans,adapter)
         setupSearch()
@@ -145,20 +152,17 @@ class HistoryTransFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        /*val exps = sharedViewModel.expList.value ?: emptyList()
-        val incs = sharedViewModel.incomeList.value ?: emptyList()
-        val categories = mutableListOf<Category>()
-        categories.addAll(exps)
-        categories.addAll(incs)
-
-        viewModel.getTrans(categories) { err ->
-            showApiResultToast(false, err)
-        }*/
         updateText()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemClick(trans: TransactionDetail) {
+        val bundle = BundleHelper.addParam(BUNDLE_KEY_TRANSACTION,trans).build()
+        Log.d("InputFragment", "transaction: $trans")
+        requireActivity().navigateFragment(AppScreen.Input,bundle)
     }
 }

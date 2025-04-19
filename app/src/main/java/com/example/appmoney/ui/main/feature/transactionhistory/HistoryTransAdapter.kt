@@ -23,7 +23,7 @@ class TransDetailDiffCallback : DiffUtil.ItemCallback<TransactionDetail>() {
 }
 
 interface TransDetailListener {
-    fun onItemClick(Trans: TransactionDetail)
+    fun onItemClick(trans: TransactionDetail)
 }
 
 class HistoryTransAdapter :

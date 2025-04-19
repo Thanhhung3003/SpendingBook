@@ -102,6 +102,6 @@ fun Transaction.toDetail(category: Category?): TransactionDetail {
         typeTrans = typeTrans,
         image = category?.image,
         color = category?.color,
-        desCat = category?.desCat
+        desCat = category?.desCat,
     )
 }

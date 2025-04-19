@@ -104,8 +104,5 @@ class FixViewModel : ViewModel() {
         return images.value?.firstOrNull { it.isSelected }?.categoryImage
     }
 
-    fun onSave() {
-        val color = colors.value?.firstOrNull { it.isSelected }
-        val image = images.value?.firstOrNull { it.isSelected }
-    }
+
 }

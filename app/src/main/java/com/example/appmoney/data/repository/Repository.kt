@@ -3,12 +3,10 @@ package com.example.appmoney.data.repository
 import android.util.Log
 import com.example.appmoney.data.model.Category
 import com.example.appmoney.data.model.Transaction
-import com.example.appmoney.ui.common.helper.CategoryMap
-import com.google.android.gms.tasks.Task
+import com.example.appmoney.ui.common.helper.ConvertMap
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 
 class Repository() {
@@ -31,7 +29,7 @@ class Repository() {
         db.collection("User").document(userId)
             .collection("Category").document(typeId)
             .collection("Item").document(itemId)
-            .set(CategoryMap.toMap(category))
+            .set(ConvertMap.toMap(category))
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it.message ?: "Unknown error") }
     }
@@ -48,7 +46,7 @@ class Repository() {
             .get()
             .addOnSuccessListener { result ->
                 val list = result.map { doc ->
-                    val category = CategoryMap.toCategory(doc.data)
+                    val category = ConvertMap.toCategory(doc.data)
                     category.copy(idCat = doc.id)
                 }
                 onSuccess(list)
@@ -69,7 +67,7 @@ class Repository() {
         db.collection("User").document(userId)
             .collection("Category").document(typeId)
             .collection("Item").document(itemId)
-            .set(CategoryMap.toMap(category))
+            .set(ConvertMap.toMap(category))
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it.message ?: "Unknown error") }
     }
@@ -94,7 +92,7 @@ class Repository() {
         val itemId = "Trans" + System.currentTimeMillis()
         db.collection("User").document(userId)
             .collection("Transaction").document(itemId)
-            .set(CategoryMap.toMapTrans(trans))
+            .set(ConvertMap.toMapTrans(trans))
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it.message ?: "Unknown error") }
     }
@@ -108,7 +106,7 @@ class Repository() {
         val userId = getUserId()
         db.collection("User").document(userId)
             .collection("Transaction").document(idTrans)
-            .set(CategoryMap.toMapTrans(trans))
+            .set(ConvertMap.toMapTrans(trans))
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it.message ?: "Unknown error") }
     }
@@ -137,7 +135,7 @@ class Repository() {
             .addOnSuccessListener { result ->
                 val list = mutableListOf<Transaction>()
                 result.forEach { doc ->
-                    list.add(CategoryMap.toStringTrans(doc.data).copy(idTrans = doc.id))
+                    list.add(ConvertMap.toStringTrans(doc.data).copy(idTrans = doc.id))
                 }
                 Log.d("Repository", "Fetched ${list.size} TransAndCat")
                 onSuccess(list)
@@ -160,7 +158,7 @@ class Repository() {
             .get()
             .addOnSuccessListener { result ->
                 val list = result.map { doc ->
-                    val trans = CategoryMap.toStringTrans(doc.data)
+                    val trans = ConvertMap.toStringTrans(doc.data)
                     trans.copy(idTrans = doc.id)
                 }
                 onSuccess(list)
