@@ -31,6 +31,7 @@ class HistoryTransFragment : Fragment(),TransDetailListener, SwipeRefreshLayout.
     private val adapter = HistoryTransAdapter()
     private lateinit var viewModel: HistoryTransViewModel
     private lateinit var sharedViewModel: ScreenHomeViewModel
+
     private val calendar = Calendar.getInstance()
 
     override fun onCreateView(

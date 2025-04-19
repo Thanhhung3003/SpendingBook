@@ -33,8 +33,6 @@ class InputFragment : Fragment() {
     private var _binding: FragmentInputBinding? = null
     private val binding get() = _binding!!
 
-    private var calendar = Calendar.getInstance()
-
     private lateinit var viewModel: InputViewModel
     private lateinit var sharedViewModel: ScreenHomeViewModel
     private lateinit var adapter: InputViewpagerAdapter
@@ -137,7 +135,6 @@ class InputFragment : Fragment() {
 
     // Setup Date-----------------------------
     private fun setupDatePicker() {
-        updateDateText()
         binding.apply {
             btnPre.setOnClickListener { changeDate(-1) }
             btnAfter.setOnClickListener { changeDate(1) }
@@ -149,19 +146,22 @@ class InputFragment : Fragment() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .build()
         datePicker.addOnPositiveButtonClickListener { selection ->
+            val calendar = viewModel.state.value?.date ?: Calendar.getInstance()
             calendar.timeInMillis = selection
-            updateDateText()
         }
         datePicker.show(childFragmentManager, "DATE_PICKER")
     }
 
     private fun changeDate(day: Int) {
+        val calendar = Calendar.getInstance().apply {
+            viewModel.state.value?.date?.let {
+                time = it.time
+            } ?: run {
+                timeInMillis = System.currentTimeMillis()
+            }
+        }
         calendar.add(Calendar.DAY_OF_MONTH, day)
-        updateDateText()
-    }
-
-    private fun updateDateText() {
-        binding.tvDate.text = TimeHelper.getByFormat(calendar, TimeFormat.Date)
+        viewModel.updateState(viewModel.state.value?.copy(date = calendar))
     }
 
     // setup Tab and ViewPager-----------------------------------
