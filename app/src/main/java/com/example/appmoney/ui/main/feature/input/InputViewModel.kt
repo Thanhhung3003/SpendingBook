@@ -34,6 +34,7 @@ class InputViewModel : ViewModel() {
     }
 
     fun handleDoneButton(
+        idTrans: String,
         sCategoryId: String,
         sDate: String,
         sAmount: Long,
@@ -44,6 +45,7 @@ class InputViewModel : ViewModel() {
     ) {
         when (state.value?.isUpdate) {
             true -> updateTrans(
+                idTrans,
                 sCategoryId,
                 sDate,
                 sAmount,
@@ -60,14 +62,12 @@ class InputViewModel : ViewModel() {
                 typeTrans,
                 onSuccess, onFailure
             )
-
-            else -> {
-
-            }
+            else -> {}
         }
     }
 
     private fun updateTrans(
+        idTrans: String,
         sCategoryId: String,
         sDate: String,
         sAmount: Long,
@@ -76,11 +76,22 @@ class InputViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
-        repo.updateCategory(
-            itemId = sCategoryId,
-            typeId = typeTrans,
-
+        if (sAmount.toString().isEmpty()) {
+            _err.value = "Bạn chưa nhập số tiền"
+            return
+        }
+        if (sCategoryId == null) {
+            _err.value = "Bạn chưa chọn danh mục"
+            return
+        }
+        val transaction = Transaction(
+            date = sDate,
+            amount = sAmount,
+            note = sNote,
+            categoryId = sCategoryId,
+            typeTrans = typeTrans,
         )
+        repo.updateTrans(idTrans,transaction, onSuccess,onFailure )
     }
 
     fun addTrans(
