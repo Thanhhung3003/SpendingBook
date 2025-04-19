@@ -25,6 +25,7 @@ import com.example.appmoney.ui.main.main_screen.navigateFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.io.InputStream
 import java.util.Calendar
 
 
@@ -68,6 +69,12 @@ class InputFragment : Fragment() {
                 text, _, _, _ ->
             viewModel.updateState(viewModel.state.value?.copy(note = text.toString()))
         }
+
+        // TODO: tao button
+        btn.setOnClickListener {
+            viewModel.updateState(TransactionState())
+            requireActivity().navigateFragment(AppScreen.HistoryTrans)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -98,7 +105,10 @@ class InputFragment : Fragment() {
                         showApiResultToast(true)
                         binding.edtNote.setText("")
                         binding.edtMoney.setText("")
+
+                        // onUpdate success
                         if (viewModel.state.value?.idTrans != null) {
+                            viewModel.updateState(TransactionState())
                             requireActivity().navigateFragment(AppScreen.HistoryTrans)
                         }
                     },
@@ -129,6 +139,10 @@ class InputFragment : Fragment() {
                 if (edtNote.text.toString() != it.note) {
                     edtNote.setText(it.note)
                 }
+            }
+
+            viewModel.state.value?.idTrans?.let {
+                // TODO: hien thi buttom
             }
         }
     }
@@ -242,7 +256,7 @@ class InputFragment : Fragment() {
                 val categoryId = it.categoryId
                 (adapter.map[tab] as? InputFragmentBehavior)?.setSelectedCategoryById(categoryId)
             } ?: run {
-                viewModel.updateState(viewModel.state.value?.copy(idTrans = null))
+                viewModel.updateState(TransactionState())
             }
         }
     }
