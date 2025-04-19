@@ -30,4 +30,11 @@ class ScreenHomeViewModel: ViewModel() {
             _expList.value = list
         }, onFailure)
     }
+
+    fun getAllCacheCategory(): List<Category> {
+        val result = mutableListOf<Category>()
+        result.addAll(incomeList.value ?: emptyList())
+        result.addAll(expList.value ?: emptyList())
+        return result
+    }
 }

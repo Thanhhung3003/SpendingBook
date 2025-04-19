@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.main.feature.transactionhistory.HistoryTransFragment">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingVertical="5dp">
+
         <TextView
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
             android:text="Danh sách giao dịch"
             android:textSize="25dp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"/>
+            android:textStyle="bold" />
+
         <View
-            android:layout_marginTop="1dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorCardShadow"/>
+            android:layout_marginTop="1dp"
+            android:background="@color/colorCardShadow" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -34,10 +37,10 @@
                 android:id="@+id/btnPre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/left"
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
-                android:contentDescription="Ngày trước"/>
+                android:contentDescription="Ngày trước"
+                android:src="@drawable/left" />
 
             <TextView
                 android:id="@+id/tvDate"
@@ -56,44 +59,55 @@
                 android:id="@+id/btnAfter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/right"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:background="@android:color/transparent"
-                android:contentDescription="Ngày sau"/>
+                android:contentDescription="Ngày sau"
+                android:src="@drawable/right" />
 
         </LinearLayout>
+
         <View
-            android:layout_marginTop="1dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorCardShadow"/>
+            android:layout_marginTop="1dp"
+            android:background="@color/colorCardShadow" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal"
-            android:paddingVertical="5dp"
-            android:layout_marginTop="5dp">
+            android:paddingVertical="5dp">
+
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:iconifiedByDefault="false"
-                android:queryHint="Tìm kiếm giao dịch"
                 android:background="@drawable/custom_searchview"
-                android:elevation="4dp"/>
+                android:elevation="4dp"
+                android:iconifiedByDefault="false"
+                android:queryHint="Tìm kiếm giao dịch" />
         </LinearLayout>
+
         <View
-            android:layout_marginTop="1dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorCardShadow"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcHistoryTrans"
+            android:layout_marginTop="1dp"
+            android:background="@color/colorCardShadow" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:contentDescription="Lich su giao dich"/>
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcHistoryTrans"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:contentDescription="Lich su giao dich" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 </FrameLayout>

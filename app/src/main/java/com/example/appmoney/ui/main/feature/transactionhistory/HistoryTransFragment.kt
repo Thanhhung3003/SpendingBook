@@ -11,25 +11,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.appmoney.R
 import com.example.appmoney.data.model.Category
-import com.example.appmoney.data.model.CategoryColor
-import com.example.appmoney.data.model.CategoryImage
-import com.example.appmoney.data.model.Transaction
-import com.example.appmoney.data.model.TransAndCat
 import com.example.appmoney.databinding.FragmentHistoryTransBinding
 import com.example.appmoney.ui.common.helper.BundleHelper
 import com.example.appmoney.ui.common.helper.Constant.BUNDLE_KEY_TRANSACTION
 import com.example.appmoney.ui.common.helper.DialogHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
-import com.example.appmoney.ui.main.feature.input.InputFragment
 import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.example.appmoney.ui.main.main_screen.navigateFragment
 import java.util.Calendar
 
 
-class HistoryTransFragment : Fragment(),TransDetailListener {
+class HistoryTransFragment : Fragment(),TransDetailListener, SwipeRefreshLayout.OnRefreshListener {
     private var _binding: FragmentHistoryTransBinding? = null
     private val binding get() = _binding!!
     private val adapter = HistoryTransAdapter()
@@ -62,23 +58,24 @@ class HistoryTransFragment : Fragment(),TransDetailListener {
             adapter.submitList(list)
         }
         binding.searchView.queryHint = getString(R.string.hint_search)
+        binding.swipeRefreshLayout.setOnRefreshListener(this)
     }
-// setupDigalog Date--------------
+
+    // setupDigalog Date--------------
     private fun updateText() {
         val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         val date = "$month/$year"
         binding.tvDate.text = "Tháng $date"
 
-    val exps = sharedViewModel.expList.value ?: emptyList()
-    val incs = sharedViewModel.incomeList.value ?: emptyList()
-    val categories = mutableListOf<Category>()
-    categories.addAll(exps)
-    categories.addAll(incs)
-
-    viewModel.getTransByMonth(date,categories) { err ->
-        showApiResultToast(false, err)
+        val categories = sharedViewModel.getAllCacheCategory()
+        fetchData(date,categories)
     }
+
+    private fun fetchData(date: String, categories: List<Category>) {
+        viewModel.getTransByMonth(date,categories) { err ->
+            showApiResultToast(false, err)
+        }
     }
 
     private fun setupDateDiaLog() {
@@ -164,5 +161,25 @@ class HistoryTransFragment : Fragment(),TransDetailListener {
         val bundle = BundleHelper.addParam(BUNDLE_KEY_TRANSACTION,trans).build()
         Log.d("InputFragment", "transaction: $trans")
         requireActivity().navigateFragment(AppScreen.Input,bundle)
+    }
+
+    override fun onRefresh() {
+        refreshData()
+    }
+
+    private fun refreshData() {
+        val month = calendar.get(Calendar.MONTH) + 1
+        val year = calendar.get(Calendar.YEAR)
+        val date = "$month/$year"
+        val categories = sharedViewModel.getAllCacheCategory()
+        fetchData(date,categories)
+        binding.swipeRefreshLayout.isRefreshing = false
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            refreshData()
+        }
     }
 }

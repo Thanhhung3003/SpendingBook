@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmoney.R
@@ -18,7 +19,9 @@ import com.example.appmoney.ui.common.helper.TimeHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
 import com.example.appmoney.ui.main.feature.input.viewPagger.InputViewpagerAdapter
 import com.example.appmoney.ui.main.feature.transactionhistory.TransactionDetail
+import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
+import com.example.appmoney.ui.main.main_screen.navigateFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -54,8 +57,18 @@ class InputFragment : Fragment() {
         setupObserver()
         setupTabSelected()
         setupDatePicker()
+        bindViewsEvent()
+
+    }
+
+    private fun bindViewsEvent() {
         binding.btnSave.setOnClickListener {
-            addDateTrans()
+            handleDoneButton()
+        }
+
+        binding.edtNote.doOnTextChanged {
+                text, _, _, _ ->
+            viewModel.updateState(viewModel.state.value?.copy(note = text.toString()))
         }
     }
 
@@ -72,24 +85,24 @@ class InputFragment : Fragment() {
     }
 
     // add Transaction----------------
-    private fun addDateTrans() {
+    private fun handleDoneButton() {
         val currentTab = viewModel.selectedTab.value ?: 0
         (adapter.map[currentTab] as? InputFragmentBehavior)?.getSelectedCategory()
             ?.let { category ->
-                val sDate = binding.tvDate.text.toString().trim()
-                val sAmount = binding.edtMoney.text.toString().trim().toLong()
-                val sNote = binding.edtNote.text.toString().trim()
                 val typeTrans = if (TabObject.tabPosition == 0) {
                     getString(R.string.cat_expenditure)
                 } else {
                     getString(R.string.cat_income)
                 }
-                viewModel.addTrans(
-                    category.idCat, sDate, sAmount, sNote, typeTrans,
+                viewModel.handleDoneButton(
+                    category.idCat, typeTrans,
                     onSuccess = {
                         showApiResultToast(true)
                         binding.edtNote.setText("")
                         binding.edtMoney.setText("")
+                        if (viewModel.state.value?.idTrans != null) {
+                            requireActivity().navigateFragment(AppScreen.HistoryTrans)
+                        }
                     },
                     onFailure = { err ->
                         showApiResultToast(false, err)
@@ -114,8 +127,10 @@ class InputFragment : Fragment() {
             val dateString = TimeHelper.getByFormat(it.date, TimeFormat.Date)
             binding.apply {
                 edtMoney.setText(it.amount.toString())
-                edtNote.setText(it.note)
                 tvDate.text = dateString
+                if (edtNote.text.toString() != it.note) {
+                    edtNote.setText(it.note)
+                }
             }
         }
     }
@@ -217,17 +232,17 @@ class InputFragment : Fragment() {
                     }
                 }
                 val newState = viewModel.state.value?.copy(
+                    idTrans = it.idTrans,
                     date = date,
                     note = it.note,
                     amount = it.amount,
-                    isUpdate = true
                 )
                 viewModel.updateState(newState)
 
                 val categoryId = it.categoryId
                 (adapter.map[tab] as? InputFragmentBehavior)?.setSelectedCategoryById(categoryId)
             } ?: run {
-                viewModel.updateState(viewModel.state.value?.copy(isUpdate = false))
+                viewModel.updateState(viewModel.state.value?.copy(idTrans = null))
             }
         }
     }
