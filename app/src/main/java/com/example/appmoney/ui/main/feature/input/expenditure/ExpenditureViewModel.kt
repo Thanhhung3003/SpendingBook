@@ -22,6 +22,14 @@ class ExpenditureViewModel: ViewModel() {
         }
     }
 
+    fun setSelectedCategoryById(categoryId: String) {
+        _categories.value?.find { it.idCat == categoryId }?.let {
+            onSelectedCategory(it)
+        } ?: run {
+            _categories.value = _categories.value?.map { it.copy(isSelected = false) }
+        }
+    }
+
     fun getSelectedCat(): Category?{
         return categories.value?.firstOrNull{it.isSelected}
     }

@@ -25,6 +25,7 @@ import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.text.DateFormat
 import java.util.Calendar
 
 
@@ -76,7 +77,7 @@ class InputFragment : Fragment() {
 // add Transaction----------------
     private fun addDateTrans() {
         val currentTab = viewModel.selectedTab.value ?: 0
-        (adapter.map[currentTab] as? CategorySelectable)?.getSelectedCategory()?.let {
+        (adapter.map[currentTab] as? InputFragmentBehavior)?.getSelectedCategory()?.let {
             category ->
             val sDate = binding.tvDate.text.toString().trim()
             val sAmount = binding.edtMoney.text.toString().trim().toLong()
@@ -113,7 +114,7 @@ class InputFragment : Fragment() {
     viewModel.state.observe(viewLifecycleOwner) {
         val dateString = TimeHelper.getByFormat(it.date, TimeFormat.Date)
         binding.apply {
-            edtMoney.setText(it.amount)
+            edtMoney.setText(it.amount.toString())
             edtNote.setText(it.note)
             tvDate.text = dateString
         }
@@ -201,20 +202,25 @@ class InputFragment : Fragment() {
 
             val trans = arguments?.getSerializable(BUNDLE_KEY_TRANSACTION,TransactionDetail::class.java)
             trans?.let {
-                binding.tvDate.text = it.date
-                binding.edtNote.setText(it.note)
-                binding.edtMoney.setText(it.amount.toString())
+
                 val tab = if (it.typeTrans == "Expenditure") 0 else 1
-                binding.Vp.setCurrentItem(tab, true)
-                if (it.desCat != null && it.color != null && it.image != null) {
-                    val cat = Category(
-                        idCat = it.categoryId,
-                        image = it.image,
-                        color = it.color,
-                        desCat = it.desCat
-                    )
-                    viewModel.updateState(viewModel.state.value?.copy())
+                viewModel.setTab(tab)
+
+                val timeMillis = TimeHelper.stringToTimestamp(it.date)?.toDate()
+                val date = Calendar.getInstance().apply {
+                    timeMillis?.let {
+                        time = timeMillis
+                    }
                 }
+                val newState = viewModel.state.value?.copy(
+                    date = date,
+                    note = it.note,
+                    amount = it.amount,
+                )
+                viewModel.updateState(newState)
+
+                val categoryId = it.categoryId
+                (adapter.map[tab] as? InputFragmentBehavior)?.setSelectedCategoryById(categoryId)
             }
         }
     }

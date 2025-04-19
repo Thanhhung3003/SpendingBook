@@ -14,14 +14,14 @@ import com.example.appmoney.ui.main.feature.categorytype.CatTypeViewModel
 import com.example.appmoney.ui.common.adapter.CategoryAdapter
 import com.example.appmoney.ui.common.adapter.CategoryListener
 import com.example.appmoney.ui.common.helper.showApiResultToast
-import com.example.appmoney.ui.main.feature.input.CategorySelectable
+import com.example.appmoney.ui.main.feature.input.InputFragmentBehavior
 import com.example.appmoney.ui.main.feature.input.InputViewModel
 import com.example.appmoney.ui.main.main_screen.AppScreen
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.example.appmoney.ui.main.main_screen.navigateFragment
 
 
-class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
+class IncomeFragment : Fragment(), CategoryListener, InputFragmentBehavior {
     private var _binding: FragmentIncomeBinding? = null
     private val binding get() = _binding!!
     private val adapter = CategoryAdapter()
@@ -83,6 +83,10 @@ class IncomeFragment : Fragment(), CategoryListener, CategorySelectable {
         } else {
             viewModel.onSelectedCategory(category)
         }
+    }
+
+    override fun setSelectedCategoryById(categoryId: String) {
+        viewModel.setSelectedCategoryById(categoryId)
     }
 
     override fun getSelectedCategory(): Category? {
