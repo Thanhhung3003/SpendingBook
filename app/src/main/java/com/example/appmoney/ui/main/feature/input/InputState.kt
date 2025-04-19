@@ -7,4 +7,5 @@ data class InputState (
     val date: Calendar = Calendar.getInstance(),
     val note: String = "",
     val amount: Long = 0,
+    val isUpdate: Boolean = false,
 )

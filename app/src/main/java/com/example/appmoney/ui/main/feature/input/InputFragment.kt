@@ -2,7 +2,6 @@ package com.example.appmoney.ui.main.feature.input
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,21 +10,18 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmoney.R
-import com.example.appmoney.data.model.Category
 import com.example.appmoney.databinding.FragmentInputBinding
 import com.example.appmoney.ui.common.helper.Constant.BUNDLE_KEY_TRANSACTION
 import com.example.appmoney.ui.common.helper.TabObject
 import com.example.appmoney.ui.common.helper.TimeFormat
 import com.example.appmoney.ui.common.helper.TimeHelper
 import com.example.appmoney.ui.common.helper.showApiResultToast
-import com.example.appmoney.ui.main.feature.input.income.IncomeFragment
 import com.example.appmoney.ui.main.feature.input.viewPagger.InputViewpagerAdapter
 import com.example.appmoney.ui.main.feature.transactionhistory.TransactionDetail
 import com.example.appmoney.ui.main.main_screen.ScreenHomeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import java.text.DateFormat
 import java.util.Calendar
 
 
@@ -36,7 +32,7 @@ class InputFragment : Fragment() {
 
     private var calendar = Calendar.getInstance()
 
-    private lateinit var viewModel : InputViewModel
+    private lateinit var viewModel: InputViewModel
     private lateinit var sharedViewModel: ScreenHomeViewModel
     private lateinit var adapter: InputViewpagerAdapter
 
@@ -74,32 +70,35 @@ class InputFragment : Fragment() {
             showApiResultToast(false, it)
         }
     }
-// add Transaction----------------
+
+    // add Transaction----------------
     private fun addDateTrans() {
         val currentTab = viewModel.selectedTab.value ?: 0
-        (adapter.map[currentTab] as? InputFragmentBehavior)?.getSelectedCategory()?.let {
-            category ->
-            val sDate = binding.tvDate.text.toString().trim()
-            val sAmount = binding.edtMoney.text.toString().trim().toLong()
-            val sNote = binding.edtNote.text.toString().trim()
-            val typeTrans = if (TabObject.tabPosition == 0) {
-                getString(R.string.cat_expenditure)
-            } else {
-                getString(R.string.cat_income)
+        (adapter.map[currentTab] as? InputFragmentBehavior)?.getSelectedCategory()
+            ?.let { category ->
+                val sDate = binding.tvDate.text.toString().trim()
+                val sAmount = binding.edtMoney.text.toString().trim().toLong()
+                val sNote = binding.edtNote.text.toString().trim()
+                val typeTrans = if (TabObject.tabPosition == 0) {
+                    getString(R.string.cat_expenditure)
+                } else {
+                    getString(R.string.cat_income)
+                }
+                viewModel.addTrans(
+                    category.idCat, sDate, sAmount, sNote, typeTrans,
+                    onSuccess = {
+                        showApiResultToast(true)
+                        binding.edtNote.setText("")
+                        binding.edtMoney.setText("")
+                    },
+                    onFailure = { err ->
+                        showApiResultToast(false, err)
+                    })
             }
-            viewModel.addTrans(category.idCat, sDate,sAmount,sNote,typeTrans,
-                onSuccess = {
-                    showApiResultToast(true)
-                    binding.edtNote.setText("")
-                    binding.edtMoney.setText("")
-                },
-                onFailure = {err ->
-                    showApiResultToast(false,err)
-                })
-        }
 
     }
-// Setup Observer ------------------------
+
+    // Setup Observer ------------------------
     private fun setupObserver() {
         viewModel.selectedTab.observe(viewLifecycleOwner) { tab ->
             binding.Vp.currentItem = tab
@@ -111,16 +110,17 @@ class InputFragment : Fragment() {
             }
         }
 
-    viewModel.state.observe(viewLifecycleOwner) {
-        val dateString = TimeHelper.getByFormat(it.date, TimeFormat.Date)
-        binding.apply {
-            edtMoney.setText(it.amount.toString())
-            edtNote.setText(it.note)
-            tvDate.text = dateString
+        viewModel.state.observe(viewLifecycleOwner) {
+            val dateString = TimeHelper.getByFormat(it.date, TimeFormat.Date)
+            binding.apply {
+                edtMoney.setText(it.amount.toString())
+                edtNote.setText(it.note)
+                tvDate.text = dateString
+            }
         }
     }
-    }
-// Setup Date-----------------------------
+
+    // Setup Date-----------------------------
     private fun setupDatePicker() {
         updateDateText()
         binding.apply {
@@ -137,18 +137,19 @@ class InputFragment : Fragment() {
             calendar.timeInMillis = selection
             updateDateText()
         }
-        datePicker.show(childFragmentManager,"DATE_PICKER")
+        datePicker.show(childFragmentManager, "DATE_PICKER")
     }
 
     private fun changeDate(day: Int) {
-        calendar.add(Calendar.DAY_OF_MONTH,day)
+        calendar.add(Calendar.DAY_OF_MONTH, day)
         updateDateText()
     }
 
     private fun updateDateText() {
         binding.tvDate.text = TimeHelper.getByFormat(calendar, TimeFormat.Date)
     }
-// setup Tab and ViewPager-----------------------------------
+
+    // setup Tab and ViewPager-----------------------------------
     private fun setupTabSelected() {
 
         binding.tabMoney.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -165,6 +166,7 @@ class InputFragment : Fragment() {
                     }
                 }
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -188,7 +190,8 @@ class InputFragment : Fragment() {
             }
         }.attach()
     }
-//-----------------------------------
+
+    //-----------------------------------
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -200,7 +203,8 @@ class InputFragment : Fragment() {
         if (!hidden) {
             binding.Vp.setCurrentItem(TabObject.tabPosition, true)
 
-            val trans = arguments?.getSerializable(BUNDLE_KEY_TRANSACTION,TransactionDetail::class.java)
+            val trans =
+                arguments?.getSerializable(BUNDLE_KEY_TRANSACTION, TransactionDetail::class.java)
             trans?.let {
 
                 val tab = if (it.typeTrans == "Expenditure") 0 else 1
@@ -216,11 +220,14 @@ class InputFragment : Fragment() {
                     date = date,
                     note = it.note,
                     amount = it.amount,
+                    isUpdate = true
                 )
                 viewModel.updateState(newState)
 
                 val categoryId = it.categoryId
                 (adapter.map[tab] as? InputFragmentBehavior)?.setSelectedCategoryById(categoryId)
+            } ?: run {
+                viewModel.updateState(viewModel.state.value?.copy(isUpdate = false))
             }
         }
     }

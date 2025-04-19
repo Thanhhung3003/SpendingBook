@@ -1,11 +1,8 @@
 package com.example.appmoney.ui.main.feature.input
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.appmoney.data.model.Category
-import com.example.appmoney.data.model.CategoryColor
 import com.example.appmoney.data.model.Transaction
 import com.example.appmoney.data.repository.Repository
 import com.example.appmoney.ui.common.helper.TabObject
@@ -34,6 +31,56 @@ class InputViewModel : ViewModel() {
         _selectedTab.value = tab
 
         TabObject.changeTab(tab)
+    }
+
+    fun handleDoneButton(
+        sCategoryId: String,
+        sDate: String,
+        sAmount: Long,
+        sNote: String,
+        typeTrans: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        when (state.value?.isUpdate) {
+            true -> updateTrans(
+                sCategoryId,
+                sDate,
+                sAmount,
+                sNote,
+                typeTrans,
+                onSuccess, onFailure
+            )
+
+            false -> addTrans(
+                sCategoryId,
+                sDate,
+                sAmount,
+                sNote,
+                typeTrans,
+                onSuccess, onFailure
+            )
+
+            else -> {
+
+            }
+        }
+    }
+
+    private fun updateTrans(
+        sCategoryId: String,
+        sDate: String,
+        sAmount: Long,
+        sNote: String,
+        typeTrans: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        repo.updateCategory(
+            itemId = sCategoryId,
+            typeId = typeTrans,
+
+        )
     }
 
     fun addTrans(
